@@ -34,6 +34,11 @@
 
                       <span class="badge badge-pill badge-warning h3">Description</span>
                       <h4 class="card-text">{{ $show[0]->description }}</h4>
+
+                      <br>
+                    
+                      <span class="badge badge-pill badge-warning h3">Image</span><br>
+                      <img src="{{ asset('/storage/img/'.$show[0]->img) }}" alt="No image found">
                      
                     </div>
                   </div>
