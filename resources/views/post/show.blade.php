@@ -37,9 +37,64 @@
 
                       <br>
                     
-                      <span class="badge badge-pill badge-warning h3">Image</span><br>
-                      <img src="{{ asset('/storage/img/'.$show[0]->img) }}" alt="No image found">
-                     
+                      @if ( $show[0]->img != '' )
+                        <span class="badge badge-pill badge-warning h3">Image</span><br>
+                        <img style="width:300px" src="{{ asset('/storage/img/'.$show[0]->img) }}" alt="No image found">
+                      @endif
+
+                      <br>
+                      <br>
+
+                      @if ($show[0]->comments)
+                      <span class="badge badge-pill badge-warning h3">Comments:</span><br>
+                      @foreach ($show[0]->comments as $comment)
+                          <div class="display-comment" >
+                              <p>{{ $comment->description }}</p>
+                              <a href="" id="reply"></a>
+                              <form method="post" action="{{ route('comments.store') }}">
+                                  @csrf
+                                  <div class="form-group">
+                                      <input type="text" name="description" class="form-control" />
+                                      <input type="hidden" name="post_id" value="{{ $comment->post_id }}" />
+                                      <input type="hidden" name="parent_id" value="{{ $comment->id }}" />
+                                  </div>
+                                  <div class="form-group">
+                                      <input type="submit" class="btn btn-warning" value="Reply" />
+                                  </div>
+                              </form>
+                          </div>
+                      @endforeach                            
+                  @endif
+
+                      <br>
+
+
+                    <form method="post" action="{{ route('comments.store') }}">  
+                        @csrf
+                       
+                        <span class="badge badge-pill badge-warning h3">Comment:</span><br>
+
+                           <div class="col-md-6">
+                               <input id="description" type="text" class="form-control  @error('description') is-invalid @enderror" name="description" value="{{ old('description') }}" required>
+                               <input type="hidden" name="post_id" value="{{ $show[0]->id }}">        
+                               
+                               @error('description')
+                                   <span class="invalid-feedback" role="alert">
+                                       <strong>{{ $message }}</strong>
+                                   </span>
+                               @enderror
+                           </div>
+
+                           <br>
+                           <br>
+
+                           <div class="form-group">
+                                <input type="submit" class="btn btn-block btn-outline-primary" value="Add Comment">
+                           </div>
+
+
+                      </form>
+
                     </div>
                   </div>
                 @endisset     

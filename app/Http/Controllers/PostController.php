@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Post;
+use App\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -25,11 +27,13 @@ class PostController extends Controller
     public function index()
     {
         //Navigates to post page
-        $posts = Post::get();
-
-        return view('post.post', compact('posts'));
+        $user = User::find(Auth::id()); 
+        $posts = $user->posts()->orderBy('created_at','desc')->get();
+        $count = $user->posts()->where('title','!=','')->count();
+        return view('post.post', compact('posts', 'count'));
         
-    }
+    }  
+    
 
     /**
      * Show the form for creating a new resource.
@@ -74,9 +78,9 @@ class PostController extends Controller
         }
 
         $post = new Post();
-        $post->title = $request->title;
-        $post->description = $request->description;
+        $post->fill($request->all());
         $post->img = $fileNameToStore;
+        $post->user_id = auth()->user()->id;
         $post->save();
 
         return redirect('/posts');
@@ -92,7 +96,8 @@ class PostController extends Controller
     {
         //Shows a specific data row to show
         $post = $post->id;
-        $show = Post::where('id', $post)->get();;
+        $show = Post::where('id', $post)->get();
+        // dd($show);
 
         return view('post.show', compact('show'));
 
